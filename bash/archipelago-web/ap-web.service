@@ -1,0 +1,13 @@
+[Unit]
+Description=Archipelago WebServer
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/ap-web/archipelago
+ExecStart=/usr/bin/python3 /opt/ap-web/archipelago/WebHost.py
+Restart=always
+User=archipelago
+Group=archipelago
+
+[Install]
+WantedBy=multi-user.target

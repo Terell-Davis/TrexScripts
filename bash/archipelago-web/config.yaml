@@ -1,0 +1,12 @@
+# Refer to ../docs/webhost configuration sample.yaml
+
+# We'll be hosting VIA gunicorn
+# SELFHOST: true
+# SELFLAUNCH: false
+
+# Host Address.  This is the address encoded into the patch that will be used for client auto-connect.
+# Set as your local IP (192.168.x.x) to serve over LAN.
+HOST_ADDRESS: example.com
+PORT: 6858
+DEBUG: false
+

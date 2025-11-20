@@ -1,0 +1,41 @@
+services:
+  multiworld:
+    image: ghcr.io/a-priestley/archipelago:nightly
+    container_name: ap-mw
+    entrypoint: python WebHost.py --config_override selflaunch.yaml
+
+    volumes:
+      - ${PATH_TO_DATA}/archipelago/output:/app/output
+      - ${PATH_TO_DATA}/archipelago/data/sprites/alttpr:/app/data/sprites/alttpr
+      - ${PATH_TO_DATA}/archipelago/logs:/app/logs
+      - ${PATH_TO_CONFIG}/archipelago/host.yaml:/app/host.yaml
+      - ${PATH_TO_CONFIG}/archipelago/config.yaml:/app/config.yaml
+      - ${PATH_TO_CONFIG}/archipelago/selflaunch.yaml:/app/selflaunch.yaml
+
+    network_mode: host
+    restart: unless-stopped
+    healthcheck:
+      test: ["NONE"]
+
+  web:
+    image: ghcr.io/a-priestley/archipelago:nightly
+    container_name: ap-web
+    entrypoint: gunicorn -c gunicorn.conf.py
+    volumes:
+      - ${PATH_TO_DATA}/archipelago/logs:/app/logs
+      - ${PATH_TO_CONFIG}/archipelago/config.yaml:/app/config.yaml
+      - ${PATH_TO_CONFIG}/archipelago/gunicorn.conf.py:/app/gunicorn.conf.py
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: ap-proxy
+    volumes:
+      - ${PATH_TO_DATA}/archipelago:/app
+      - ${PATH_TO_CONFIG}/archipelago/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 7253:80
+    depends_on:
+      - ap-web
